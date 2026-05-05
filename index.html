@@ -41,11 +41,10 @@
         </div>
     </div>
 
-    <form action="/vote" method="post">
-        <button name="option" value="mbappe_out" class="btn-red">
-            REMOVE MBAPPÉ ❌
-        </button>
-    </form>
+    <!-- 🔥 BOTÓN SIN FORM -->
+    <button type="button" onclick="vote(this, 'mbappe_out')" class="btn-red">
+        REMOVE MBAPPÉ ❌
+    </button>
 
     <!-- 🟡 MBAPPÉ STAY -->
     <div class="vote-box">
@@ -64,15 +63,12 @@
         </div>
     </div>
 
-    <form action="/vote" method="post">
-        <button name="option" value="mbappe_stay" class="btn-gold">
-            KEEP MBAPPÉ ⭐
-        </button>
-    </form>
+    <!-- 🔥 BOTÓN SIN FORM -->
+    <button type="button" onclick="vote(this, 'mbappe_stay')" class="btn-gold">
+        KEEP MBAPPÉ ⭐
+    </button>
 
 </div>
-
-
 <!-- 🟡 VINICIUS -->
 <div class="side">
 
@@ -103,11 +99,10 @@
         </div>
     </div>
 
-    <form action="/vote" method="post">
-        <button name="option" value="vini_out" class="btn-red">
-            REMOVE VINICIUS ❌
-        </button>
-    </form>
+    <!-- 🔥 BOTÓN SIN FORM -->
+    <button type="button" onclick="vote(this, 'vini_out')" class="btn-red">
+        REMOVE VINICIUS ❌
+    </button>
 
     <!-- 🟡 VINI STAY -->
     <div class="vote-box">
@@ -126,43 +121,146 @@
         </div>
     </div>
 
-    <form action="/vote" method="post">
-        <button name="option" value="vini_stay" class="btn-gold">
-            KEEP VINICIUS ⭐
-        </button>
-    </form>
+    <!-- 🔥 BOTÓN SIN FORM -->
+    <button type="button" onclick="vote(this, 'vini_stay')" class="btn-gold">
+        KEEP VINICIUS ⭐
+    </button>
 
 </div>
-
 <script>
+
+// =========================
+// 🔥 VOTO SIN RECARGA
+// =========================
+async function vote(btn, option) {
+
+    const group = option.includes("mbappe") ? "mbappe" : "vini";
+
+    // 🔒 si ya votó
+    if (localStorage.getItem(group)) {
+        showToast("YOU'VE ALREADY SIGNED");
+        return;
+    }
+
+    const res = await fetch("/vote", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: `option=${option}`
+    });
+
+    const data = await res.json();
+
+    if (data.ok) {
+
+        // 💾 guardar voto local
+        localStorage.setItem(group, option);
+
+        // ✔ marcar botón
+        btn.innerHTML += " ✔";
+        btn.style.border = "2px solid #00ff88";
+        btn.style.boxShadow = "0 0 12px #00ff88";
+
+        // 🔒 bloquear grupo
+        document.querySelectorAll("button").forEach(b => {
+            if (b.getAttribute("onclick")?.includes(group)) {
+                b.disabled = true;
+                b.style.opacity = "0.5";
+            }
+        });
+
+        showToast("THANK YOU FOR VOTING");
+
+    } else {
+        showToast("YOU'VE ALREADY SIGNED");
+    }
+}
+
+
+// =========================
+// 💬 MENSAJE (TOAST)
+// =========================
+function showToast(text) {
+    let toast = document.createElement("div");
+    toast.innerText = text;
+
+    toast.style.position = "fixed";
+    toast.style.bottom = "20px";
+    toast.style.left = "50%";
+    toast.style.transform = "translateX(-50%)";
+    toast.style.background = "#00ff88";
+    toast.style.color = "#000";
+    toast.style.padding = "12px 25px";
+    toast.style.borderRadius = "25px";
+    toast.style.fontWeight = "700";
+    toast.style.zIndex = "9999";
+
+    document.body.appendChild(toast);
+
+    setTimeout(() => toast.remove(), 2000);
+}
+
+
+// =========================
+// 🔄 RESTAURAR ESTADO
+// =========================
+window.onload = () => {
+
+    ["mbappe", "vini"].forEach(group => {
+
+        const vote = localStorage.getItem(group);
+
+        if (vote) {
+
+            // 🔒 bloquear botones
+            document.querySelectorAll("button").forEach(b => {
+                if (b.getAttribute("onclick")?.includes(group)) {
+                    b.disabled = true;
+                    b.style.opacity = "0.5";
+                }
+            });
+
+            // ✔ marcar botón elegido
+            const btn = [...document.querySelectorAll("button")]
+                .find(b => b.getAttribute("onclick")?.includes(vote));
+
+            if (btn && !btn.innerHTML.includes("✔")) {
+                btn.innerHTML += " ✔";
+                btn.style.border = "2px solid #00ff88";
+                btn.style.boxShadow = "0 0 12px #00ff88";
+            }
+        }
+
+    });
+
+};
+
+
+// =========================
+// 📊 STATS (TU SISTEMA)
+// =========================
 async function updateStats() {
     try {
         const res = await fetch('/stats');
         const data = await res.json();
 
-        console.log("🔥 DATA:", data); // DEBUG
-
-        // 🔥 DATOS
         const mbappeOut = data.mbappe_out || 0;
         const mbappeStay = data.mbappe_stay || 0;
         const viniOut = data.vini_out || 0;
         const viniStay = data.vini_stay || 0;
         const GOAL = data.goal || 200000;
 
-        // 🔢 CONTADORES
         animateValue("mbappeOutCount", mbappeOut);
         animateValue("mbappeStayCount", mbappeStay);
         animateValue("viniOutCount", viniOut);
         animateValue("viniStayCount", viniStay);
 
-        // 🔥 FUNCIÓN PROGRESO REAL
         function calc(votos, goal) {
             if (goal <= 0) goal = 1;
-            let p = (votos / goal) * 100;
-            return Math.min(p, 100);
+            return Math.min((votos / goal) * 100, 100);
         }
 
-        // 📊 BARRAS (CORRECTAS)
         document.getElementById("mbappeOutBar").style.width =
             calc(mbappeOut, GOAL) + "%";
 
@@ -180,7 +278,10 @@ async function updateStats() {
     }
 }
 
-// 🔥 ANIMACIÓN DE NÚMEROS
+
+// =========================
+// 🔢 ANIMACIÓN
+// =========================
 function animateValue(id, newValue) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -203,11 +304,13 @@ function animateValue(id, newValue) {
     }, 20);
 }
 
-// 🔄 AUTO UPDATE
-setInterval(updateStats, 10000);
 
-// 🚀 PRIMERA CARGA
+// =========================
+// 🚀 AUTO UPDATE
+// =========================
+setInterval(updateStats, 10000);
 updateStats();
+
 </script>
 </body>
 </html>
