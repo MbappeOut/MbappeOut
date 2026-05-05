@@ -236,7 +236,49 @@ def admin_vote(
     conn.close()
 
     return {"ok": True, "added": amount}
+@app.post("/admin/remove")
+def remove_votes(
+    option: str = Query(...),
+    key: str = Query(...),
+    amount: int = Query(1)
+):
+    # 🔐 PROTECCIÓN
+    if key != ADMIN_KEY:
+        raise HTTPException(status_code=403, detail="No autorizado")
 
+    # 🛑 VALIDACIONES IMPORTANTES
+    if amount <= 0:
+        raise HTTPException(status_code=400, detail="Cantidad inválida")
+
+    if amount > 100000:
+        raise HTTPException(status_code=400, detail="Demasiado grande")
+
+    conn = get_db()
+    cursor = conn.cursor()
+
+    # 🧠 BORRAR SOLO LO NECESARIO
+    cursor.execute(
+        """
+        DELETE FROM votes 
+        WHERE rowid IN (
+            SELECT rowid FROM votes 
+            WHERE option = ? 
+            LIMIT ?
+        )
+        """,
+        (option, amount)
+    )
+
+    deleted = cursor.rowcount
+
+    conn.commit()
+    conn.close()
+
+    return {
+        "ok": True,
+        "requested": amount,
+        "deleted": deleted
+    }
 from fastapi.responses import JSONResponse
 
 @app.post("/vote")
