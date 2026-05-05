@@ -7,6 +7,9 @@ import json
 import io
 import mimetypes
 from threading import Lock
+import requests
+import re
+import time
 
 # 🔥 Google Drive
 from google.oauth2 import service_account
@@ -87,7 +90,7 @@ def save_email_to_drive(email: str):
         print("❌ Error Drive:", e)
 
 # =========================
-# 🖼️ IMÁGENES DESDE DRIVE
+# 🖼️ IMÁGENES
 # =========================
 
 DATA_DIR = "/var/data/images"
@@ -111,8 +114,6 @@ def load_images_from_drive():
 
     files = results.get("files", [])
     IMAGES = {file["name"]: file["id"] for file in files}
-
-    print("🧠 IMAGES:", IMAGES)
 
 def download_from_drive(file_id, path):
     request = drive_service.files().get_media(fileId=file_id)
@@ -145,6 +146,47 @@ def serve_image(image_name: str):
     return FileResponse(file_path, media_type=media_type)
 
 # =========================
+# 🌍 SCRAPER EXTERNO (CLAVE)
+# =========================
+
+external_cache = {
+    "value": 0,
+    "last_update": 0
+}
+
+def get_external_votes():
+    # 🔥 cache 30s
+    if time.time() - external_cache["last_update"] < 30:
+        return external_cache["value"]
+
+    try:
+        url = "https://mbappeout.replit.app/"
+        res = requests.get(url, timeout=5)
+        html = res.text
+
+        # 🔥 detectar número tipo 2.525.160
+        match = re.search(r'(\d{1,3}(?:\.\d{3})+)', html)
+
+        if match:
+            number = match.group(1)
+            number = int(number.replace(".", ""))
+
+            # 🚀 DETECTAR SALTO GRANDE (ej: +5000)
+            if abs(number - external_cache["value"]) > 5000:
+                print("🚀 SALTO DETECTADO:", number)
+
+            external_cache["value"] = number
+            external_cache["last_update"] = time.time()
+
+            print("🌍 EXTERNO:", number)
+
+        return external_cache["value"]
+
+    except Exception as e:
+        print("❌ ERROR scraping:", e)
+        return external_cache["value"]
+
+# =========================
 # 🌐 ROUTES
 # =========================
 
@@ -152,16 +194,13 @@ def serve_image(image_name: str):
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-# 🔥 VOTAR (ANTI DUPLICADO)
+# 🔥 VOTO (1 POR IP)
 @app.post("/vote")
 def vote(request: Request, option: str = Form(...)):
     ip = request.client.host
 
-    # verificar si ya votó
     cursor.execute("SELECT * FROM votes WHERE ip=?", (ip,))
-    existing = cursor.fetchone()
-
-    if existing:
+    if cursor.fetchone():
         return RedirectResponse(url="/", status_code=303)
 
     cursor.execute(
@@ -171,25 +210,42 @@ def vote(request: Request, option: str = Form(...)):
     conn.commit()
 
     return RedirectResponse(url="/", status_code=303)
-
-# 📊 STATS TIEMPO REAL
 @app.get("/stats")
 def stats():
-    cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe'")
-    mbappe = cursor.fetchone()[0]
+    try:
+        # 📊 votos locales
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe'")
+        mbappe_local = cursor.fetchone()[0] or 0
 
-    cursor.execute("SELECT COUNT(*) FROM votes WHERE option='stay'")
-    stay = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='stay'")
+        stay = cursor.fetchone()[0] or 0
 
-    cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vinicius'")
-    vinicius = cursor.fetchone()[0]
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vinicius'")
+        vinicius = cursor.fetchone()[0] or 0
 
-    return {
-        "mbappe": mbappe,
-        "stay": stay,
-        "vinicius": vinicius
-    }
+        # 🌍 votos externos (seguro)
+        external = get_external_votes() or 0
 
+        # 🔥 total combinado
+        mbappe_total = mbappe_local + external
+
+        return {
+            "mbappe": mbappe_total,
+            "stay": stay,
+            "vinicius": vinicius,
+            "external": external
+        }
+
+    except Exception as e:
+        print("❌ ERROR /stats:", e)
+
+        # fallback (no romper frontend)
+        return {
+            "mbappe": 0,
+            "stay": 0,
+            "vinicius": 0,
+            "external": 0
+        }
 # 💌 LEADS
 @app.post("/lead")
 def lead(email: str = Form(...)):
