@@ -10,91 +10,105 @@
 
 <div class="container">
 
-    <!-- 🔴 MBAPPE -->
-    <div class="side">
-        <div class="card">
+<!-- 🔴 MBAPPE -->
+<div class="side">
 
-            <img src="/img/mbappe.png" class="player">
+    <div class="hero">
+        <img src="/static/mbappe.png" class="hero-img">
+        <div class="overlay"></div>
+        <div class="stamp red">MBAPPE</div>
+    </div>
 
-            <div class="desc">
-                Madridistas, make your voice heard. Sign this petition.
-            </div>
+    <div class="desc">
+        Madridistas, decide Mbappé future at Real Madrid.
+    </div>
 
-            <div class="counter-card">
-                <div class="counter-top">
-                    <div id="mbappeCount" class="counter-number">0</div>
-                    <div class="goal">
-                        <span>200,000</span>
-                        <small>GOAL</small>
-                    </div>
-                </div>
+    <!-- 🔴 MBAPPE OUT -->
+    <div class="counter-card">
+        <div class="counter-top">
+            <div id="mbappeOutCount" class="counter-number red">0</div>
+            <span class="label red">OUT</span>
+        </div>
 
-                <div class="counter-label">MADRIDISTAS SIGNED</div>
-
-                <div class="progress">
-                    <div id="mbappeBar" class="bar bar-red"></div>
-                </div>
-
-                <div class="percent">live campaign</div>
-            </div>
-
-            <form action="/vote" method="post">
-                <button name="option" value="mbappe" class="btn-red">
-                    SIGN THE PETITION 
-                </button>
-            </form>
-
-            <form action="/vote" method="post">
-                <button name="option" value="stay" class="btn-gold">
-                    KEEP MBAPPE 
-                </button>
-            </form>
-
+        <div class="progress">
+            <div id="mbappeOutBar" class="bar bar-red"></div>
         </div>
     </div>
 
-    <!-- 🟡 VINICIUS -->
-    <div class="side">
-        <div class="card">
+    <form action="/vote" method="post">
+        <button name="option" value="mbappe_out" class="btn-red">
+            REMOVE MBAPPE ❌
+        </button>
+    </form>
 
-            <img src="/img/vini.png" class="player">
+    <!-- 🟡 MBAPPE STAY -->
+    <div class="counter-card">
+        <div class="counter-top">
+            <div id="mbappeStayCount" class="counter-number gold">0</div>
+            <span class="label gold">STAY</span>
+        </div>
 
-            <div class="desc">
-                Support Vinícius and keep him leading Real Madrid.
-            </div>
-
-            <div class="counter-card">
-                <div class="counter-top">
-                    <div id="viniCount" class="counter-number">0</div>
-                    <div class="goal">
-                        <span>200,000</span>
-                        <small>GOAL</small>
-                    </div>
-                </div>
-
-                <div class="counter-label">MADRIDISTAS SIGNED</div>
-
-                <div class="progress">
-                    <div id="viniBar" class="bar bar-gold"></div>
-                </div>
-
-                <div class="percent">live campaign</div>
-            </div>
-
-            <form action="/vote" method="post">
-                <button name="option" value="mbappe" class="btn-red">
-                    REMOVE MBAPPE 
-                </button>
-            </form>
-
-            <form action="/vote" method="post">
-                <button name="option" value="stay" class="btn-gold">
-                    KEEP VINICIUS 
-                </button>
-            </form>
-
+        <div class="progress">
+            <div id="mbappeStayBar" class="bar bar-gold"></div>
         </div>
     </div>
+
+    <form action="/vote" method="post">
+        <button name="option" value="mbappe_stay" class="btn-gold">
+            KEEP MBAPPE ⭐
+        </button>
+    </form>
+
+</div>
+
+<!-- 🟡 VINICIUS -->
+<div class="side">
+
+    <div class="hero">
+        <img src="/img/vini.png" class="hero-img">
+        <div class="overlay"></div>
+        <div class="stamp gold">VINI</div>
+    </div>
+
+    <div class="desc">
+        Decide Vinícius future at Real Madrid. Your vote matters.
+    </div>
+
+    <!-- 🔴 VINI OUT -->
+    <div class="counter-card">
+        <div class="counter-top">
+            <div id="viniOutCount" class="counter-number red">0</div>
+            <span class="label red">OUT</span>
+        </div>
+
+        <div class="progress">
+            <div id="viniOutBar" class="bar bar-red"></div>
+        </div>
+    </div>
+
+    <form action="/vote" method="post">
+        <button name="option" value="vini_out" class="btn-red">
+            REMOVE VINICIUS ❌
+        </button>
+    </form>
+
+    <!-- 🟡 VINI STAY -->
+    <div class="counter-card">
+        <div class="counter-top">
+            <div id="viniStayCount" class="counter-number gold">0</div>
+            <span class="label gold">STAY</span>
+        </div>
+
+        <div class="progress">
+            <div id="viniStayBar" class="bar bar-gold"></div>
+        </div>
+    </div>
+
+    <form action="/vote" method="post">
+        <button name="option" value="vini_stay" class="btn-gold">
+            KEEP VINICIUS ⭐
+        </button>
+    </form>
 
 </div>
 
@@ -131,26 +145,17 @@ function animateValue(id, newValue) {
     if (current === newValue) return;
 
     let start = current;
-    const duration = 400;
-    const stepTime = 20;
-    const steps = duration / stepTime;
-    const increment = (newValue - start) / steps;
-
-    let count = 0;
+    const increment = (newValue - start) / 20;
 
     const timer = setInterval(() => {
         start += increment;
         el.innerText = Math.floor(start);
 
-        count++;
-        if (count >= steps) {
+        if (Math.abs(start - newValue) < 1) {
             el.innerText = newValue;
             clearInterval(timer);
-
-            el.classList.add("flash");
-            setTimeout(() => el.classList.remove("flash"), 300);
         }
-    }, stepTime);
+    }, 20);
 }
 
 setInterval(updateStats, 3000);

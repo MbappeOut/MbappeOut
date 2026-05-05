@@ -210,41 +210,39 @@ def vote(request: Request, option: str = Form(...)):
     conn.commit()
 
     return RedirectResponse(url="/", status_code=303)
+
 @app.get("/stats")
 def stats():
     try:
-        # 📊 votos locales
-        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe'")
-        mbappe_local = cursor.fetchone()[0] or 0
+        # 🔴 MBAPPE
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe_out'")
+        mbappe_out = cursor.fetchone()[0] or 0
 
-        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='stay'")
-        stay = cursor.fetchone()[0] or 0
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe_stay'")
+        mbappe_stay = cursor.fetchone()[0] or 0
 
-        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vinicius'")
-        vinicius = cursor.fetchone()[0] or 0
+        # 🟡 VINICIUS
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vini_out'")
+        vini_out = cursor.fetchone()[0] or 0
 
-        # 🌍 votos externos (seguro)
-        external = get_external_votes() or 0
-
-        # 🔥 total combinado
-        mbappe_total = mbappe_local + external
+        cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vini_stay'")
+        vini_stay = cursor.fetchone()[0] or 0
 
         return {
-            "mbappe": mbappe_total,
-            "stay": stay,
-            "vinicius": vinicius,
-            "external": external
+            "mbappe_out": mbappe_out,
+            "mbappe_stay": mbappe_stay,
+            "vini_out": vini_out,
+            "vini_stay": vini_stay
         }
 
     except Exception as e:
         print("❌ ERROR /stats:", e)
 
-        # fallback (no romper frontend)
         return {
-            "mbappe": 0,
-            "stay": 0,
-            "vinicius": 0,
-            "external": 0
+            "mbappe_out": 0,
+            "mbappe_stay": 0,
+            "vini_out": 0,
+            "vini_stay": 0
         }
 # 💌 LEADS
 @app.post("/lead")
