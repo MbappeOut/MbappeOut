@@ -137,21 +137,20 @@
 <footer class="mini-footer">
     HALA MADRID
 </footer>
-
 <script>
 async function updateStats() {
     try {
         const res = await fetch('/stats');
         const data = await res.json();
 
-        // 🔥 DATOS CORRECTOS DEL BACKEND
+        // 🔥 DATOS BACKEND
         const mbappeOut = data.mbappe_out || 0;
         const mbappeStay = data.mbappe_stay || 0;
         const viniOut = data.vini_out || 0;
         const viniStay = data.vini_stay || 0;
 
-        const totalMbappe = mbappeOut + mbappeStay || 1;
-        const totalVini = viniOut + viniStay || 1;
+        // 🔥 GOAL (si luego lo mandas desde backend mejor)
+        const GOAL = data.goal || 200000;
 
         // 🔢 CONTADORES
         animateValue("mbappeOutCount", mbappeOut);
@@ -159,18 +158,25 @@ async function updateStats() {
         animateValue("viniOutCount", viniOut);
         animateValue("viniStayCount", viniStay);
 
-        // 📊 BARRAS
+        // 🔥 FUNCIÓN CORRECTA DE PROGRESO
+        function calcProgress(votos, goal) {
+            if (goal <= 0) goal = 1;
+            let p = (votos / goal) * 100;
+            return Math.min(p, 100); // 🔥 no pasa de 100%
+        }
+
+        // 📊 BARRAS (YA CORRECTAS)
         document.getElementById("mbappeOutBar").style.width =
-            (mbappeOut / totalMbappe * 100) + "%";
+            calcProgress(mbappeOut, GOAL) + "%";
 
         document.getElementById("mbappeStayBar").style.width =
-            (mbappeStay / totalMbappe * 100) + "%";
+            calcProgress(mbappeStay, GOAL) + "%";
 
         document.getElementById("viniOutBar").style.width =
-            (viniOut / totalVini * 100) + "%";
+            calcProgress(viniOut, GOAL) + "%";
 
         document.getElementById("viniStayBar").style.width =
-            (viniStay / totalVini * 100) + "%";
+            calcProgress(viniStay, GOAL) + "%";
 
     } catch (e) {
         console.log("error stats", e);
@@ -191,7 +197,6 @@ function animateValue(id, newValue) {
     const timer = setInterval(() => {
         start += increment;
 
-        // 🔥 FORMATO PROFESIONAL (1.000.000)
         el.innerText = Math.floor(start).toLocaleString("es-CO");
 
         if (Math.abs(start - newValue) < 1) {
