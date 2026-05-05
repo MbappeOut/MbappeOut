@@ -18,6 +18,69 @@ from googleapiclient.http import MediaIoBaseUpload, MediaIoBaseDownload
 
 app = FastAPI()
 templates = Jinja2Templates(directory=".")
+# =========================
+# 🧠 TRAFICO REAL
+# =========================
+import os
+import json
+import requests
+import gspread
+
+from fastapi import FastAPI, Request
+from google.oauth2.service_account import Credentials
+
+
+# =========================
+# 🔐 GOOGLE SHEETS SETUP
+# =========================
+
+creds_json = json.loads(os.environ["GOOGLE_CREDS_JSON"])
+
+scope = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive"
+]
+
+creds = Credentials.from_service_account_info(creds_json, scopes=scope)
+client = gspread.authorize(creds)
+
+# 🔥 abre tu sheet
+sheet = client.open_by_url(
+    "https://docs.google.com/spreadsheets/d/1UTfdII5KGzxRSRGa870jvVKW8A165M4g1P2P0W3Tzes/edit#gid=0"
+).sheet1
+
+
+# =========================
+# 🌍 OBTENER PAIS POR IP
+# =========================
+
+def get_country(ip):
+    try:
+        res = requests.get(f"http://ip-api.com/json/{ip}", timeout=2)
+        data = res.json()
+        return data.get("country", "Unknown")
+    except:
+        return "Unknown"
+
+
+# =========================
+# 🚀 TRACK VISITAS
+# =========================
+
+@app.get("/")
+def home(request: Request):
+
+    ip = request.client.host
+    country = get_country(ip)
+
+    try:
+        # 👇 esto escribe en Google Sheets
+        sheet.append_row([ip, country])
+    except Exception as e:
+        print("❌ Error escribiendo en Sheets:", e)
+
+    return {"ok": True, "ip": ip, "country": country}
+
 
 # =========================
 # 🧠 DATABASE
