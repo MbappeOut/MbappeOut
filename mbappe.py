@@ -210,40 +210,71 @@ def vote(request: Request, option: str = Form(...)):
     conn.commit()
 
     return RedirectResponse(url="/", status_code=303)
-
 @app.get("/stats")
 def stats():
     try:
-        # 🔴 MBAPPE
+        GOAL = 200000
+
+        # 🔥 BASE (los números que quieres mostrar)
+        BASE_MBAPPE_OUT = 3912138
+        BASE_MBAPPE_STAY = 1098432
+        BASE_VINI_OUT = 523344
+        BASE_VINI_STAY = 1233233
+
+        # 🔴 MBAPPE (reales)
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe_out'")
-        mbappe_out = cursor.fetchone()[0] or 0
+        mbappe_out_real = cursor.fetchone()[0] or 0
 
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe_stay'")
-        mbappe_stay = cursor.fetchone()[0] or 0
+        mbappe_stay_real = cursor.fetchone()[0] or 0
 
-        # 🟡 VINICIUS
+        # 🟡 VINICIUS (reales)
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vini_out'")
-        vini_out = cursor.fetchone()[0] or 0
+        vini_out_real = cursor.fetchone()[0] or 0
 
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vini_stay'")
-        vini_stay = cursor.fetchone()[0] or 0
+        vini_stay_real = cursor.fetchone()[0] or 0
+
+        # 🔥 SUMA FINAL (base + real)
+        mbappe_out = BASE_MBAPPE_OUT + mbappe_out_real
+        mbappe_stay = BASE_MBAPPE_STAY + mbappe_stay_real
+        vini_out = BASE_VINI_OUT + vini_out_real
+        vini_stay = BASE_VINI_STAY + vini_stay_real
+
+        # 🔥 TOTALES
+        mbappe_total = mbappe_out + mbappe_stay
+        vini_total = vini_out + vini_stay
+
+        # 🔥 PROGRESO
+        def calc(v, goal):
+            if goal <= 0:
+                goal = 1
+            p = (v / goal) * 100
+            return min(p, 100)
 
         return {
             "mbappe_out": mbappe_out,
             "mbappe_stay": mbappe_stay,
             "vini_out": vini_out,
-            "vini_stay": vini_stay
+            "vini_stay": vini_stay,
+
+            "goal": GOAL,
+
+            "mbappe_progress": calc(mbappe_total, GOAL),
+            "vini_progress": calc(vini_total, GOAL),
+
+            "mbappe_total": mbappe_total,
+            "vini_total": vini_total
         }
 
     except Exception as e:
         print("❌ ERROR /stats:", e)
+        return {}
 
-        return {
-            "mbappe_out": 0,
-            "mbappe_stay": 0,
-            "vini_out": 0,
-            "vini_stay": 0
-        }
+
+
+
+
 # 💌 LEADS
 @app.post("/lead")
 def lead(email: str = Form(...)):

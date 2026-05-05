@@ -17,7 +17,7 @@
     <div class="hero">
         <img src="/img/mbappe1.png" class="hero-img">
         <div class="overlay"></div>
-        <div class="stamp red">OUT</div>
+        <div class="stamp red">OUT?</div>
     </div>
 
     <div class="desc">
@@ -79,7 +79,7 @@
     <div class="hero">
         <img src="/img/vini.png" class="hero-img">
         <div class="overlay"></div>
-        <div class="stamp gold">STAY</div>
+        <div class="stamp gold">STAY?</div>
     </div>
 
     <div class="desc">
@@ -143,13 +143,13 @@ async function updateStats() {
         const res = await fetch('/stats');
         const data = await res.json();
 
-        // 🔥 DATOS BACKEND
+        console.log("🔥 DATA:", data); // DEBUG
+
+        // 🔥 DATOS
         const mbappeOut = data.mbappe_out || 0;
         const mbappeStay = data.mbappe_stay || 0;
         const viniOut = data.vini_out || 0;
         const viniStay = data.vini_stay || 0;
-
-        // 🔥 GOAL (si luego lo mandas desde backend mejor)
         const GOAL = data.goal || 200000;
 
         // 🔢 CONTADORES
@@ -158,37 +158,37 @@ async function updateStats() {
         animateValue("viniOutCount", viniOut);
         animateValue("viniStayCount", viniStay);
 
-        // 🔥 FUNCIÓN CORRECTA DE PROGRESO
-        function calcProgress(votos, goal) {
+        // 🔥 FUNCIÓN PROGRESO REAL
+        function calc(votos, goal) {
             if (goal <= 0) goal = 1;
             let p = (votos / goal) * 100;
-            return Math.min(p, 100); // 🔥 no pasa de 100%
+            return Math.min(p, 100);
         }
 
-        // 📊 BARRAS (YA CORRECTAS)
+        // 📊 BARRAS (CORRECTAS)
         document.getElementById("mbappeOutBar").style.width =
-            calcProgress(mbappeOut, GOAL) + "%";
+            calc(mbappeOut, GOAL) + "%";
 
         document.getElementById("mbappeStayBar").style.width =
-            calcProgress(mbappeStay, GOAL) + "%";
+            calc(mbappeStay, GOAL) + "%";
 
         document.getElementById("viniOutBar").style.width =
-            calcProgress(viniOut, GOAL) + "%";
+            calc(viniOut, GOAL) + "%";
 
         document.getElementById("viniStayBar").style.width =
-            calcProgress(viniStay, GOAL) + "%";
+            calc(viniStay, GOAL) + "%";
 
     } catch (e) {
-        console.log("error stats", e);
+        console.log("❌ error stats", e);
     }
 }
 
+// 🔥 ANIMACIÓN DE NÚMEROS
 function animateValue(id, newValue) {
     const el = document.getElementById(id);
     if (!el) return;
 
     const current = parseInt(el.innerText.replace(/\./g, '')) || 0;
-
     if (current === newValue) return;
 
     let start = current;
@@ -206,12 +206,11 @@ function animateValue(id, newValue) {
     }, 20);
 }
 
-// 🔄 ACTUALIZA CADA 3 SEGUNDOS
+// 🔄 AUTO UPDATE
 setInterval(updateStats, 3000);
 
 // 🚀 PRIMERA CARGA
 updateStats();
 </script>
-
 </body>
 </html>
