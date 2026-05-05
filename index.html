@@ -10,7 +10,7 @@
 
 <div class="container">
 
-    <!-- 🔴 MBAPPE OUT -->
+    <!-- 🔴 MBAPPE -->
     <div class="side">
         <img src="/img/mbappe.png" class="player">
 
@@ -20,17 +20,17 @@
             <div id="mbappeBar" class="bar bar-red"></div>
         </div>
 
-        <!-- BOTÓN OUT -->
+        <!-- OUT -->
         <form action="/vote" method="post">
             <button name="option" value="mbappe" class="big-btn big-btn-red">
-                SIGN THE PETITION ❌
+                SIGN TO REMOVE ❌
             </button>
         </form>
 
-        <!-- BOTÓN STAY -->
+        <!-- STAY -->
         <form action="/vote" method="post">
             <button name="option" value="stay" class="big-btn big-btn-gold">
-                STAY ⭐
+                KEEP MBAPPE ⭐
             </button>
         </form>
     </div>
@@ -42,12 +42,20 @@
         <div id="viniCount" class="counter">0</div>
 
         <div class="progress">
-            <div id="viniBar" class="bar bar-green"></div>
+            <div id="viniBar" class="bar bar-gold"></div>
         </div>
 
+        <!-- OUT -->
         <form action="/vote" method="post">
-            <button name="option" value="vinicius" class="big-btn big-btn-green">
-                SUPPORT VINICIUS 🐐
+            <button name="option" value="mbappe" class="big-btn big-btn-red">
+                REMOVE MBAPPE ❌
+            </button>
+        </form>
+
+        <!-- STAY -->
+        <form action="/vote" method="post">
+            <button name="option" value="stay" class="big-btn big-btn-gold">
+                KEEP VINICIUS ⭐
             </button>
         </form>
     </div>
@@ -61,23 +69,22 @@ async function updateStats() {
         const res = await fetch('/stats');
         const data = await res.json();
 
-        const mbappe = data.mbappe;
-        const vini = data.vinicius;
+        const mbappe = data.mbappe || 0;
         const stay = data.stay || 0;
+        const vini = data.vinicius || 0;
 
-        const totalLeft = mbappe + stay || 1;
-        const totalRight = vini || 1;
+        const total = mbappe + stay + vini || 1;
 
+        // 🔢 counters
         animateValue("mbappeCount", mbappe);
         animateValue("viniCount", vini);
 
-        // 🔴 barra OUT
+        // 📊 barras
         document.getElementById("mbappeBar").style.width =
-            (mbappe / totalLeft * 100) + "%";
+            (mbappe / total * 100) + "%";
 
-        // 🟢 barra vini
         document.getElementById("viniBar").style.width =
-            (vini / (vini + mbappe + stay) * 100) + "%";
+            (vini / total * 100) + "%";
 
     } catch (e) {
         console.log("error stats", e);
@@ -113,6 +120,7 @@ function animateValue(id, newValue) {
     }, stepTime);
 }
 
+// 🔄 refresh cada 3s
 setInterval(updateStats, 3000);
 updateStats();
 </script>

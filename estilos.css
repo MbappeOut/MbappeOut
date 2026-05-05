@@ -3,156 +3,157 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg: #070708;
+    --panel: #0e0f12;
+    --panel-2: #14161a;
+    --text: #e7e7ea;
+    --muted: #9aa0a6;
+
+    --red-1: #ff3b3b;
+    --red-2: #7a0f12;
+
+    --accent-1: #c9ccd3;  /* acento neutro (gris claro) */
+    --accent-2: #6f7681;  /* gris medio */
+}
+
+/* BASE */
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background: radial-gradient(circle at center, #1a0000, #000);
-    color: white;
+    font-family: Inter, Arial, sans-serif;
+    background:
+        radial-gradient(800px 400px at 50% -10%, #1b0a0a 0%, transparent 60%),
+        radial-gradient(600px 300px at 80% 0%, #0a0a0a 0%, transparent 60%),
+        var(--bg);
+    color: var(--text);
     text-align: center;
 }
 
-/* 🔥 TITULO */
+/* TITULO */
 .title {
-    margin-top: 30px;
-    font-size: 32px;
-    letter-spacing: 5px;
-    font-weight: bold;
-    color: #999;
+    margin-top: 28px;
+    font-size: 28px;
+    letter-spacing: 4px;
+    font-weight: 700;
+    color: var(--muted);
 }
 
-.title span {
-    color: red;
-}
-
-/* 📦 LAYOUT */
+/* LAYOUT */
 .container {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: flex-start;
-    margin-top: 40px;
-    gap: 40px;
+    gap: 48px;
+    margin: 40px auto 0;
+    padding: 0 16px 40px;
+    max-width: 1100px;
     flex-wrap: wrap;
 }
 
 .side {
-    width: 40%;
-    min-width: 280px;
+    width: 360px;
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border-radius: 18px;
+    padding: 22px;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.7),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
 }
 
-/* 🖼️ IMÁGENES */
+/* IMAGEN */
 .player {
-    width: 280px;
+    width: 100%;
     border-radius: 12px;
-    box-shadow: 0 0 40px rgba(255, 0, 0, 0.5);
-    transition: 0.3s;
+    margin-bottom: 18px;
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.6),
+        0 0 30px rgba(255, 40, 40, 0.12);
+    transition: transform 0.25s ease;
 }
 
 .player:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
 }
 
-/* 🔢 CONTADOR */
+/* CONTADOR */
 .counter {
-    font-size: 42px;
-    font-weight: bold;
-    margin: 20px 0;
-    transition: 0.2s;
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    margin: 10px 0 14px;
 }
 
-/* ✨ EFECTO CUANDO SUBE */
+/* EFECTO SUBIDA */
 .flash {
-    color: gold;
-    transform: scale(1.2);
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255,255,255,0.35);
+    transform: scale(1.12);
 }
 
-/* 📊 BARRAS */
+/* PROGRESS */
 .progress {
-    width: 80%;
-    height: 12px;
-    background: #222;
+    width: 100%;
+    height: 10px;
+    background: #1b1d22;
     border-radius: 10px;
-    margin: 10px auto 25px;
+    margin-bottom: 22px;
     overflow: hidden;
 }
 
 .bar {
     height: 100%;
     width: 0%;
-    transition: width 0.6s ease;
+    transition: width 0.5s ease;
 }
 
-/* colores barras */
+/* BARRAS */
 .bar-red {
-    background: linear-gradient(90deg, red, darkred);
+    background: linear-gradient(90deg, var(--red-1), var(--red-2));
 }
 
-.bar-green {
-    background: linear-gradient(90deg, limegreen, green);
+.bar-neutral {
+    background: linear-gradient(90deg, #9aa0a6, #3a3f46);
 }
 
-/* 🔘 BOTONES BASE */
+/* BOTONES BASE */
 .big-btn {
-    width: 80%;
+    width: 100%;
     padding: 15px;
-    font-size: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     border: none;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
     cursor: pointer;
-    font-weight: bold;
-    margin-bottom: 10px;
-    transition: 0.25s;
+    margin-top: 10px;
+    transition: all 0.25s ease;
 }
 
-/* 🔴 BOTÓN ROJO (petition) */
+/* OUT (rojo premium) */
 .big-btn-red {
-    background: linear-gradient(45deg, #ff0000, #cc0000);
+    background: linear-gradient(180deg, #ff2b2b, #8e0e12);
     color: white;
-    box-shadow: 0 0 20px rgba(255,0,0,0.6);
+    box-shadow:
+        0 6px 18px rgba(255, 30, 30, 0.35),
+        inset 0 0 0 1px rgba(255,255,255,0.06);
 }
 
-/* 🟡 BOTÓN DORADO (stay) */
+/* STAY (gris premium, NO amarillo) */
 .big-btn-gold {
-    background: linear-gradient(45deg, gold, orange);
-    color: black;
-    box-shadow: 0 0 20px gold;
+    background: linear-gradient(180deg, #2a2d33, #121316);
+    color: #e5e7eb;
+    box-shadow:
+        0 6px 18px rgba(0,0,0,0.6),
+        inset 0 0 0 1px rgba(255,255,255,0.06);
 }
 
-/* 🟢 BOTÓN VERDE */
-.big-btn-green {
-    background: linear-gradient(45deg, limegreen, green);
-    color: white;
-}
-
-/* 🔥 HOVER GENERAL */
+/* HOVER */
 .big-btn:hover {
-    transform: scale(1.06);
-    opacity: 0.95;
+    transform: translateY(-2px) scale(1.03);
+    opacity: 0.96;
 }
 
-/* 🟡 BOTÓN FINAL */
-.final {
-    margin-top: 50px;
-}
-
-.gold {
-    background: linear-gradient(45deg, gold, orange);
-    color: black;
-    padding: 15px 40px;
-    font-size: 18px;
-    border-radius: 10px;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 0 25px gold;
-    transition: 0.3s;
-}
-
-.gold:hover {
-    transform: scale(1.08);
-    box-shadow: 0 0 35px gold;
-}
-
-/* 📱 RESPONSIVE */
+/* RESPONSIVE */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
@@ -160,10 +161,6 @@ body {
     }
 
     .side {
-        width: 90%;
-    }
-
-    .player {
-        width: 90%;
+        width: 92%;
     }
 }
