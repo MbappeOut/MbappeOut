@@ -11,6 +11,7 @@
 
 <div class="container">
 
+<!-- 🔴 MBAPPÉ -->
 <div class="side">
 
     <div class="hero">
@@ -23,7 +24,7 @@
         Madridistas, make your voice heard. Decide Mbappé’s future.
     </div>
 
-    <!-- 🔴 OUT -->
+    <!-- 🔴 MBAPPÉ OUT -->
     <div class="vote-box">
         <div class="vote-header">
             <span id="mbappeOutCount" class="counter-number">0</span>
@@ -46,7 +47,7 @@
         </button>
     </form>
 
-    <!-- 🟡 STAY -->
+    <!-- 🟡 MBAPPÉ STAY -->
     <div class="vote-box">
         <div class="vote-header">
             <span id="mbappeStayCount" class="counter-number">0</span>
@@ -71,6 +72,8 @@
 
 </div>
 
+
+<!-- 🟡 VINICIUS -->
 <div class="side">
 
     <div class="hero">
@@ -80,10 +83,10 @@
     </div>
 
     <div class="desc">
-        Support Vinícius and keep him leading Real Madrid.
+        Decide Vinícius future at Real Madrid. Your vote matters.
     </div>
 
-    <!-- 🔴 OUT -->
+    <!-- 🔴 VINI OUT -->
     <div class="vote-box">
         <div class="vote-header">
             <span id="viniOutCount" class="counter-number">0</span>
@@ -106,7 +109,7 @@
         </button>
     </form>
 
-    <!-- 🟡 STAY -->
+    <!-- 🟡 VINI STAY -->
     <div class="vote-box">
         <div class="vote-header">
             <span id="viniStayCount" class="counter-number">0</span>
@@ -141,20 +144,33 @@ async function updateStats() {
         const res = await fetch('/stats');
         const data = await res.json();
 
-        const mbappe = data.mbappe || 0;
-        const vini = data.vinicius || 0;
-        const stay = data.stay || 0;
+        // 🔥 DATOS CORRECTOS DEL BACKEND
+        const mbappeOut = data.mbappe_out || 0;
+        const mbappeStay = data.mbappe_stay || 0;
+        const viniOut = data.vini_out || 0;
+        const viniStay = data.vini_stay || 0;
 
-        const total = mbappe + vini + stay || 1;
+        const totalMbappe = mbappeOut + mbappeStay || 1;
+        const totalVini = viniOut + viniStay || 1;
 
-        animateValue("mbappeCount", mbappe);
-        animateValue("viniCount", vini);
+        // 🔢 CONTADORES
+        animateValue("mbappeOutCount", mbappeOut);
+        animateValue("mbappeStayCount", mbappeStay);
+        animateValue("viniOutCount", viniOut);
+        animateValue("viniStayCount", viniStay);
 
-        document.getElementById("mbappeBar").style.width =
-            (mbappe / total * 100) + "%";
+        // 📊 BARRAS
+        document.getElementById("mbappeOutBar").style.width =
+            (mbappeOut / totalMbappe * 100) + "%";
 
-        document.getElementById("viniBar").style.width =
-            (vini / total * 100) + "%";
+        document.getElementById("mbappeStayBar").style.width =
+            (mbappeStay / totalMbappe * 100) + "%";
+
+        document.getElementById("viniOutBar").style.width =
+            (viniOut / totalVini * 100) + "%";
+
+        document.getElementById("viniStayBar").style.width =
+            (viniStay / totalVini * 100) + "%";
 
     } catch (e) {
         console.log("error stats", e);
@@ -163,7 +179,9 @@ async function updateStats() {
 
 function animateValue(id, newValue) {
     const el = document.getElementById(id);
-    const current = parseInt(el.innerText) || 0;
+    if (!el) return;
+
+    const current = parseInt(el.innerText.replace(/\./g, '')) || 0;
 
     if (current === newValue) return;
 
@@ -172,16 +190,21 @@ function animateValue(id, newValue) {
 
     const timer = setInterval(() => {
         start += increment;
-        el.innerText = Math.floor(start);
+
+        // 🔥 FORMATO PROFESIONAL (1.000.000)
+        el.innerText = Math.floor(start).toLocaleString("es-CO");
 
         if (Math.abs(start - newValue) < 1) {
-            el.innerText = newValue;
+            el.innerText = newValue.toLocaleString("es-CO");
             clearInterval(timer);
         }
     }, 20);
 }
 
+// 🔄 ACTUALIZA CADA 3 SEGUNDOS
 setInterval(updateStats, 3000);
+
+// 🚀 PRIMERA CARGA
 updateStats();
 </script>
 
