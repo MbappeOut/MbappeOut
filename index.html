@@ -12,57 +12,92 @@
 
     <!-- 🔴 MBAPPE -->
     <div class="side">
-        <img src="/img/mbappe.png" class="player">
+        <div class="card">
 
-        <div id="mbappeCount" class="counter">0</div>
+            <img src="/img/mbappe.png" class="player">
 
-        <div class="progress">
-            <div id="mbappeBar" class="bar bar-red"></div>
+            <div class="desc">
+                Madridistas, make your voice heard. Sign this petition.
+            </div>
+
+            <div class="counter-card">
+                <div class="counter-top">
+                    <div id="mbappeCount" class="counter-number">0</div>
+                    <div class="goal">
+                        <span>200,000</span>
+                        <small>GOAL</small>
+                    </div>
+                </div>
+
+                <div class="counter-label">MADRIDISTAS SIGNED</div>
+
+                <div class="progress">
+                    <div id="mbappeBar" class="bar bar-red"></div>
+                </div>
+
+                <div class="percent">live campaign</div>
+            </div>
+
+            <form action="/vote" method="post">
+                <button name="option" value="mbappe" class="btn-red">
+                    SIGN THE PETITION 
+                </button>
+            </form>
+
+            <form action="/vote" method="post">
+                <button name="option" value="stay" class="btn-gold">
+                    KEEP MBAPPE 
+                </button>
+            </form>
+
         </div>
-
-        <!-- OUT -->
-        <form action="/vote" method="post">
-            <button name="option" value="mbappe" class="big-btn big-btn-red">
-                SIGN TO REMOVE ❌
-            </button>
-        </form>
-
-        <!-- STAY -->
-        <form action="/vote" method="post">
-            <button name="option" value="stay" class="big-btn big-btn-gold">
-                KEEP MBAPPE ⭐
-            </button>
-        </form>
     </div>
 
-    <!-- 🟢 VINICIUS -->
+    <!-- 🟡 VINICIUS -->
     <div class="side">
-        <img src="/img/vini.png" class="player">
+        <div class="card">
 
-        <div id="viniCount" class="counter">0</div>
+            <img src="/img/vini.png" class="player">
 
-        <div class="progress">
-            <div id="viniBar" class="bar bar-gold"></div>
+            <div class="desc">
+                Support Vinícius and keep him leading Real Madrid.
+            </div>
+
+            <div class="counter-card">
+                <div class="counter-top">
+                    <div id="viniCount" class="counter-number">0</div>
+                    <div class="goal">
+                        <span>200,000</span>
+                        <small>GOAL</small>
+                    </div>
+                </div>
+
+                <div class="counter-label">MADRIDISTAS SIGNED</div>
+
+                <div class="progress">
+                    <div id="viniBar" class="bar bar-gold"></div>
+                </div>
+
+                <div class="percent">live campaign</div>
+            </div>
+
+            <form action="/vote" method="post">
+                <button name="option" value="mbappe" class="btn-red">
+                    REMOVE MBAPPE 
+                </button>
+            </form>
+
+            <form action="/vote" method="post">
+                <button name="option" value="stay" class="btn-gold">
+                    KEEP VINICIUS 
+                </button>
+            </form>
+
         </div>
-
-        <!-- OUT -->
-        <form action="/vote" method="post">
-            <button name="option" value="mbappe" class="big-btn big-btn-red">
-                REMOVE MBAPPE ❌
-            </button>
-        </form>
-
-        <!-- STAY -->
-        <form action="/vote" method="post">
-            <button name="option" value="stay" class="big-btn big-btn-gold">
-                KEEP VINICIUS ⭐
-            </button>
-        </form>
     </div>
 
 </div>
 
-<!-- 🔥 SCRIPT -->
 <script>
 async function updateStats() {
     try {
@@ -70,16 +105,14 @@ async function updateStats() {
         const data = await res.json();
 
         const mbappe = data.mbappe || 0;
-        const stay = data.stay || 0;
         const vini = data.vinicius || 0;
+        const stay = data.stay || 0;
 
-        const total = mbappe + stay + vini || 1;
+        const total = mbappe + vini + stay || 1;
 
-        // 🔢 counters
         animateValue("mbappeCount", mbappe);
         animateValue("viniCount", vini);
 
-        // 📊 barras
         document.getElementById("mbappeBar").style.width =
             (mbappe / total * 100) + "%";
 
@@ -120,7 +153,6 @@ function animateValue(id, newValue) {
     }, stepTime);
 }
 
-// 🔄 refresh cada 3s
 setInterval(updateStats, 3000);
 updateStats();
 </script>
