@@ -17,41 +17,83 @@ body {
     color: #aaa;
 }
 
+/* 🔥 CONTENEDOR PRINCIPAL */
 .container {
     display: flex;
     justify-content: center;
-    gap: 50px;
+    align-items: flex-start;
+    gap: 30px;
     margin-top: 40px;
-    flex-wrap: wrap;
+    padding: 0 20px;
 }
 
+/* 🔥 CADA LADO = EXACTAMENTE MITAD */
 .side {
-    width: 360px;
+    width: 50%;
+    max-width: 500px;
 }
 
-.card {
-    background: linear-gradient(180deg, #0d0d0f, #050506);
-    border-radius: 20px;
-    padding: 20px;
-    box-shadow:
-        0 20px 60px rgba(0,0,0,0.9),
-        inset 0 0 0 1px rgba(255,255,255,0.05);
-}
-
-.player {
+/* 🔥 HERO (IMAGEN CONTROLADA) */
+.hero {
+    position: relative;
     width: 100%;
-    border-radius: 12px;
-    margin-bottom: 15px;
+    height: 420px; /* 🔥 MISMO ALTO PARA TODOS */
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
 }
 
+/* 🔥 IMAGEN AJUSTADA PERFECTA */
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;       /* 🔥 CLAVE */
+    object-position: center; /* centra bien */
+    display: block;
+}
+
+/* 🔥 OVERLAY */
+.overlay {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to top, black, transparent);
+}
+
+/* 🔥 STAMP */
+.stamp {
+    position: absolute;
+    bottom: 25px;
+    left: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    padding: 8px 16px;
+    border: 3px solid;
+    transform: rotate(-10deg);
+}
+
+.stamp.red {
+    color: red;
+    border-color: red;
+    box-shadow: 0 0 20px red;
+}
+
+.stamp.gold {
+    color: #d4af37;
+    border-color: #d4af37;
+    box-shadow: 0 0 20px rgba(212,175,55,0.4);
+}
+
+/* TEXTO */
 .desc {
     font-size: 13px;
     color: #aaa;
     text-align: left;
-    margin-bottom: 15px;
+    margin: 15px 0;
 }
 
-/* COUNTER */
+/* 🔥 COUNTER */
 .counter-card {
     background: linear-gradient(180deg, #111, #070707);
     border-radius: 16px;
@@ -66,7 +108,7 @@ body {
 }
 
 .counter-number {
-    font-size: 44px;
+    font-size: 42px;
     font-weight: 900;
 }
 
@@ -96,7 +138,7 @@ body {
 
 .bar {
     height: 100%;
-    transition: width 0.5s;
+    transition: width 0.5s ease;
 }
 
 .bar-red {
@@ -105,13 +147,6 @@ body {
 
 .bar-gold {
     background: linear-gradient(90deg, #c8a94a, #6b5a1e);
-}
-
-.percent {
-    font-size: 11px;
-    color: #666;
-    margin-top: 5px;
-    text-align: right;
 }
 
 /* BOTONES */
@@ -144,19 +179,25 @@ body {
     transform: scale(1.04);
 }
 
+/* EFECTO CONTADOR */
 .flash {
     color: gold;
     transform: scale(1.2);
 }
 
-/* RESPONSIVE */
-@media (max-width: 768px) {
+/* 📱 RESPONSIVE */
+@media (max-width: 900px) {
     .container {
         flex-direction: column;
         align-items: center;
     }
 
     .side {
-        width: 90%;
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .hero {
+        height: 320px;
     }
 }
