@@ -119,8 +119,17 @@ body {
 }
 
 .counter-number {
-    font-size: 42px;
-    font-weight: 900;
+    font-family: 'Oswald', sans-serif;
+    font-size: 52px;
+    font-weight: 700;
+    letter-spacing: 1px;
+
+    color: #eaeaea;
+
+    /* 🔥 efecto tipo referencia */
+    text-shadow:
+        0 2px 10px rgba(255,255,255,0.1),
+        0 0 2px rgba(255,255,255,0.2);
 }
 
 .goal span {
@@ -257,6 +266,12 @@ button {
     transform: scale(1.04);
 }
 
+
+
+
+
+
+
 /* EFECTO CONTADOR */
 .flash {
     color: #ffd700;
@@ -278,4 +293,28 @@ button {
     .hero {
         height: 420px;
     }
+}
+/* FOOTEEER  */
+
+.mini-footer {
+    margin-top: 60px;
+    margin-bottom: 20px;
+    font-size: 12px;
+    letter-spacing: 2px;
+    font-weight: 600;
+
+    color: #d4af37;
+
+    opacity: 0.7;
+
+    text-align: center;
+
+    /* 🔥 glow sutil elegante */
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+}
+
+/* hover sutil */
+.mini-footer:hover {
+    opacity: 1;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
 }

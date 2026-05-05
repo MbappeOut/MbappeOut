@@ -3,6 +3,7 @@
 <head>
     <title>MBAPPE OUT</title>
     <link rel="stylesheet" href="/estilos.css">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -10,79 +11,92 @@
 
 <div class="container">
 
-<!-- 🔴 MBAPPE -->
 <div class="side">
 
     <div class="hero">
         <img src="/img/mbappe.png" class="hero-img">
         <div class="overlay"></div>
-        <div class="stamp red">MBAPPE</div>
+        <div class="stamp red">OUT</div>
     </div>
 
     <div class="desc">
-        Madridistas, decide Mbappé future at Real Madrid.
+        Madridistas, make your voice heard. Decide Mbappé’s future.
     </div>
 
-    <!-- 🔴 MBAPPE OUT -->
-    <div class="counter-card">
-        <div class="counter-top">
-            <div id="mbappeOutCount" class="counter-number red">0</div>
-            <span class="label red">OUT</span>
+    <!-- 🔴 OUT -->
+    <div class="vote-box">
+        <div class="vote-header">
+            <span id="mbappeOutCount" class="counter-number">0</span>
+            <div class="vote-goal">
+                <span>200,000</span>
+                <small>GOAL</small>
+            </div>
         </div>
 
-        <div class="progress">
-            <div id="mbappeOutBar" class="bar bar-red"></div>
+        <div class="vote-label">REMOVE MBAPPÉ</div>
+
+        <div class="vote-bar">
+            <div id="mbappeOutBar" class="vote-fill red"></div>
         </div>
     </div>
 
     <form action="/vote" method="post">
         <button name="option" value="mbappe_out" class="btn-red">
-            REMOVE MBAPPE ❌
+            REMOVE MBAPPÉ ❌
         </button>
     </form>
 
-    <!-- 🟡 MBAPPE STAY -->
-    <div class="counter-card">
-        <div class="counter-top">
-            <div id="mbappeStayCount" class="counter-number gold">0</div>
-            <span class="label gold">STAY</span>
+    <!-- 🟡 STAY -->
+    <div class="vote-box">
+        <div class="vote-header">
+            <span id="mbappeStayCount" class="counter-number">0</span>
+            <div class="vote-goal gold">
+                <span>200,000</span>
+                <small>GOAL</small>
+            </div>
         </div>
 
-        <div class="progress">
-            <div id="mbappeStayBar" class="bar bar-gold"></div>
+        <div class="vote-label">KEEP MBAPPÉ</div>
+
+        <div class="vote-bar">
+            <div id="mbappeStayBar" class="vote-fill gold"></div>
         </div>
     </div>
 
     <form action="/vote" method="post">
         <button name="option" value="mbappe_stay" class="btn-gold">
-            KEEP MBAPPE ⭐
+            KEEP MBAPPÉ ⭐
         </button>
     </form>
 
 </div>
 
-<!-- 🟡 VINICIUS -->
 <div class="side">
 
     <div class="hero">
         <img src="/img/vini.png" class="hero-img">
         <div class="overlay"></div>
-        <div class="stamp gold">VINI</div>
+        <div class="stamp gold">STAY</div>
     </div>
 
     <div class="desc">
-        Decide Vinícius future at Real Madrid. Your vote matters.
+        Support Vinícius and keep him leading Real Madrid.
     </div>
 
-    <!-- 🔴 VINI OUT -->
-    <div class="counter-card">
-        <div class="counter-top">
-            <div id="viniOutCount" class="counter-number red">0</div>
-            <span class="label red">OUT</span>
+    <!-- 🔴 OUT -->
+    <div class="vote-box">
+        <div class="vote-header">
+            <span id="viniOutCount" class="counter-number">0</span>
+            <div class="vote-goal">
+                <span>200,000</span>
+                <small>GOAL</small>
+            </div>
         </div>
 
-        <div class="progress">
-            <div id="viniOutBar" class="bar bar-red"></div>
+        <div class="vote-label">REMOVE VINICIUS</div>
+
+        <div class="vote-bar">
+            <div id="viniOutBar" class="vote-fill red"></div>
         </div>
     </div>
 
@@ -92,15 +106,20 @@
         </button>
     </form>
 
-    <!-- 🟡 VINI STAY -->
-    <div class="counter-card">
-        <div class="counter-top">
-            <div id="viniStayCount" class="counter-number gold">0</div>
-            <span class="label gold">STAY</span>
+    <!-- 🟡 STAY -->
+    <div class="vote-box">
+        <div class="vote-header">
+            <span id="viniStayCount" class="counter-number">0</span>
+            <div class="vote-goal gold">
+                <span>200,000</span>
+                <small>GOAL</small>
+            </div>
         </div>
 
-        <div class="progress">
-            <div id="viniStayBar" class="bar bar-gold"></div>
+        <div class="vote-label">KEEP VINICIUS</div>
+
+        <div class="vote-bar">
+            <div id="viniStayBar" class="vote-fill gold"></div>
         </div>
     </div>
 
@@ -111,6 +130,10 @@
     </form>
 
 </div>
+
+<footer class="mini-footer">
+    HALA MADRID
+</footer>
 
 <script>
 async function updateStats() {
