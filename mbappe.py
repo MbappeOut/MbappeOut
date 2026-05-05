@@ -202,8 +202,6 @@ def get_external_votes():
 # =========================
 import sqlite3
 
-def get_db():
-    return sqlite3.connect("tu_db.db", check_same_thread=False)
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
@@ -327,8 +325,12 @@ def stats():
 # 💌 LEADS
 @app.post("/lead")
 def lead(email: str = Form(...)):
+    conn = get_db()
+    cursor = conn.cursor()
+
     cursor.execute("INSERT INTO leads (email) VALUES (?)", (email,))
     conn.commit()
+    conn.close()
 
     save_email_to_drive(email)
 
