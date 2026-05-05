@@ -237,6 +237,7 @@ def admin_vote(
 
     return {"ok": True, "added": amount}
 
+from fastapi.responses import JSONResponse
 
 @app.post("/vote")
 def vote(request: Request, option: str = Form(...)):
@@ -245,11 +246,26 @@ def vote(request: Request, option: str = Form(...)):
 
     ip = request.client.host
 
-    cursor.execute("SELECT 1 FROM votes WHERE ip=?", (ip,))
+    # 🔥 detectar grupo
+    if "mbappe" in option:
+        grupo = "mbappe"
+    elif "vini" in option:
+        grupo = "vini"
+    else:
+        conn.close()
+        return JSONResponse({"ok": False})
+
+    # 🔒 validar voto por grupo
+    cursor.execute("""
+        SELECT 1 FROM votes 
+        WHERE ip=? AND option LIKE ?
+    """, (ip, f"{grupo}%"))
+
     if cursor.fetchone():
         conn.close()
-        return RedirectResponse(url="/", status_code=303)
+        return JSONResponse({"ok": False})
 
+    # ✅ guardar voto
     cursor.execute(
         "INSERT INTO votes (option, ip) VALUES (?, ?)",
         (option, ip)
@@ -258,9 +274,7 @@ def vote(request: Request, option: str = Form(...)):
     conn.commit()
     conn.close()
 
-    return RedirectResponse(url="/", status_code=303)
-
-
+    return JSONResponse({"ok": True, "option": option})
 import sqlite3
 @app.get("/stats")
 def stats():
