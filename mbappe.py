@@ -23,26 +23,35 @@ templates = Jinja2Templates(directory=".")
 # 🧠 DATABASE
 # =========================
 
-conn = sqlite3.connect("db.sqlite", check_same_thread=False)
-cursor = conn.cursor()
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS votes (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    option TEXT,
-    ip TEXT
-)
-""")
 
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS leads (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT
-)
-""")
+DB_PATH = "/var/data/votes.db"
 
-conn.commit()
+def get_db():
+    return sqlite3.connect(DB_PATH, check_same_thread=False)
+import os
 
+if not os.path.exists(DB_PATH):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE votes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        option TEXT,
+        ip TEXT
+    )
+    """)
+
+    cursor.execute("""
+    CREATE TABLE leads (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        email TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
 # =========================
 # 🎨 CSS
 # =========================
@@ -189,11 +198,17 @@ def get_external_votes():
 # =========================
 # 🌐 ROUTES
 # =========================
+import sqlite3
 
+def get_db():
+    return sqlite3.connect("tu_db.db", check_same_thread=False)
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 import os
+from fastapi import Query, HTTPException
+
+ADMIN_KEY = os.getenv("ADMIN_KEY")
 from fastapi import Query, HTTPException
 
 ADMIN_KEY = os.getenv("ADMIN_KEY")
@@ -207,84 +222,94 @@ def admin_vote(
     if key != ADMIN_KEY:
         raise HTTPException(status_code=403, detail="No autorizado")
 
-    for _ in range(amount):
-        cursor.execute(
-            "INSERT INTO votes (option) VALUES (?)",
-            (option,)
-        )
+    conn = get_db()
+    cursor = conn.cursor()
+
+    data = [(option,) for _ in range(amount)]
+
+    cursor.executemany(
+        "INSERT INTO votes (option) VALUES (?)",
+        data
+    )
 
     conn.commit()
+    conn.close()
 
     return {"ok": True, "added": amount}
-# 🔥 VOTO (1 POR IP)
+
+
 @app.post("/vote")
 def vote(request: Request, option: str = Form(...)):
+    conn = get_db()
+    cursor = conn.cursor()
+
     ip = request.client.host
 
-    cursor.execute("SELECT * FROM votes WHERE ip=?", (ip,))
+    cursor.execute("SELECT 1 FROM votes WHERE ip=?", (ip,))
     if cursor.fetchone():
+        conn.close()
         return RedirectResponse(url="/", status_code=303)
 
     cursor.execute(
         "INSERT INTO votes (option, ip) VALUES (?, ?)",
         (option, ip)
     )
+
     conn.commit()
+    conn.close()
 
     return RedirectResponse(url="/", status_code=303)
+
+
+import sqlite3
 @app.get("/stats")
 def stats():
     try:
+        conn = get_db()
+        cursor = conn.cursor()
+
         GOAL = 200000
 
-        # 🔥 BASE (los números que quieres mostrar)
         BASE_MBAPPE_OUT = 3912138
         BASE_MBAPPE_STAY = 1098432
         BASE_VINI_OUT = 523344
         BASE_VINI_STAY = 1233233
 
-        # 🔴 MBAPPE (reales)
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe_out'")
         mbappe_out_real = cursor.fetchone()[0] or 0
 
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='mbappe_stay'")
         mbappe_stay_real = cursor.fetchone()[0] or 0
 
-        # 🟡 VINICIUS (reales)
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vini_out'")
         vini_out_real = cursor.fetchone()[0] or 0
 
         cursor.execute("SELECT COUNT(*) FROM votes WHERE option='vini_stay'")
         vini_stay_real = cursor.fetchone()[0] or 0
 
-        # 🔥 SUMA FINAL (base + real)
+        conn.close()
+
         mbappe_out = BASE_MBAPPE_OUT + mbappe_out_real
         mbappe_stay = BASE_MBAPPE_STAY + mbappe_stay_real
         vini_out = BASE_VINI_OUT + vini_out_real
         vini_stay = BASE_VINI_STAY + vini_stay_real
 
-        # 🔥 TOTALES
         mbappe_total = mbappe_out + mbappe_stay
         vini_total = vini_out + vini_stay
 
-        # 🔥 PROGRESO
         def calc(v, goal):
             if goal <= 0:
                 goal = 1
-            p = (v / goal) * 100
-            return min(p, 100)
+            return min((v / goal) * 100, 100)
 
         return {
             "mbappe_out": mbappe_out,
             "mbappe_stay": mbappe_stay,
             "vini_out": vini_out,
             "vini_stay": vini_stay,
-
             "goal": GOAL,
-
             "mbappe_progress": calc(mbappe_total, GOAL),
             "vini_progress": calc(vini_total, GOAL),
-
             "mbappe_total": mbappe_total,
             "vini_total": vini_total
         }

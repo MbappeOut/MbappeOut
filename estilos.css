@@ -253,6 +253,26 @@ body {
         height: 420px;
     }
 }
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* 🔥 esto es clave */
+.container {
+    flex: 1;
+}
+
+
+
+
+
+
 /* 🔥 ESTRUCTURA PARA BAJAR FOOTER */
 body {
     margin: 0;
@@ -294,6 +314,15 @@ body {
     opacity: 1;
     text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
 }
+
+
+
+
+
+
+
+
+
 
 
 /* 🔥 NUEVA BARRA PRO (LA QUE TE FALTA) */
