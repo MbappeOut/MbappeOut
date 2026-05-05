@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vote Now</title>
+    <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>WHO SHOULD LEAD REAL MADRID?</h1>
+
+    <div class="counter">
+        <p>Mbappé OUT: {{ mbappe }}</p>
+        <p>Vinícius IN: {{ vinicius }}</p>
+    </div>
+
+    <form action="/vote" method="post">
+        <button name="option" value="mbappe" class="btn red">MBAPPÉ OUT</button>
+        <button name="option" value="vinicius" class="btn green">VINÍCIUS GOAT</button>
+    </form>
+</div>
+
+</body>
+</html>
