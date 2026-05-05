@@ -294,27 +294,104 @@ button {
         height: 420px;
     }
 }
-/* FOOTEEER  */
+/* 🔥 ESTRUCTURA PARA BAJAR FOOTER */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: radial-gradient(circle at center, #0a0a0a, #000);
+    color: white;
+    text-align: center;
 
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* el contenido crece */
+.container {
+    flex: 1;
+}
+
+/* 🔥 FOOTER ABAJO + LINEA ROJA */
 .mini-footer {
-    margin-top: 60px;
-    margin-bottom: 20px;
+    padding: 15px 0;
     font-size: 12px;
     letter-spacing: 2px;
     font-weight: 600;
-
     color: #d4af37;
 
-    opacity: 0.7;
-
     text-align: center;
+    opacity: 0.8;
 
-    /* 🔥 glow sutil elegante */
+    /* 🔴 línea roja arriba */
+    border-top: 1px solid rgba(255, 0, 0, 0.25);
+
+    /* glow elegante */
     text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
 }
 
-/* hover sutil */
+/* hover */
 .mini-footer:hover {
     opacity: 1;
     text-shadow: 0 0 12px rgba(212, 175, 55, 0.6);
+}
+
+
+/* 🔥 NUEVA BARRA PRO (LA QUE TE FALTA) */
+
+.vote-bar {
+    position: relative;
+    height: 10px;
+    border-radius: 10px;
+    overflow: hidden;
+
+    background: linear-gradient(
+        90deg,
+        #1a1a1a,
+        #0d0d0d
+    );
+
+    box-shadow:
+        inset 0 0 8px rgba(0,0,0,0.8),
+        0 0 5px rgba(255,0,0,0.05);
+}
+
+/* 🔴 ROJO */
+.vote-fill.red {
+    height: 100%;
+    width: 0%;
+
+    background: linear-gradient(
+        90deg,
+        #ff2a2a,
+        #ff0000,
+        #ff4d4d
+    );
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 0 12px rgba(255, 0, 0, 0.6);
+
+    transition: width 0.6s ease;
+}
+
+/* 🟡 GOLD */
+.vote-fill.gold {
+    height: 100%;
+    width: 0%;
+
+    background: linear-gradient(
+        90deg,
+        #a87c1d,
+        #f5d06f,
+        #a87c1d
+    );
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 0 10px rgba(255, 215, 0, 0.5);
+
+    transition: width 0.6s ease;
 }
