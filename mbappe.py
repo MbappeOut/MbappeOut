@@ -193,7 +193,29 @@ def get_external_votes():
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+import os
+from fastapi import Query, HTTPException
 
+ADMIN_KEY = os.getenv("ADMIN_KEY")
+
+@app.post("/admin/vote")
+def admin_vote(
+    option: str = Query(...),
+    key: str = Query(...),
+    amount: int = Query(1)
+):
+    if key != ADMIN_KEY:
+        raise HTTPException(status_code=403, detail="No autorizado")
+
+    for _ in range(amount):
+        cursor.execute(
+            "INSERT INTO votes (option) VALUES (?)",
+            (option,)
+        )
+
+    conn.commit()
+
+    return {"ok": True, "added": amount}
 # 🔥 VOTO (1 POR IP)
 @app.post("/vote")
 def vote(request: Request, option: str = Form(...)):
