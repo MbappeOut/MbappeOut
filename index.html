@@ -1,33 +1,121 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Vote Now</title>
+    <title>MBAPPE OUT</title>
     <link rel="stylesheet" href="/estilos.css">
 </head>
 <body>
 
+<h1 class="title">MAKE YOUR VOICE HEARD</h1>
+
 <div class="container">
-    
-    <h1 class="title">
-        MBAPPE <span>OUT</span>
-    </h1>
 
-    <!-- 🔥 IMAGEN PRINCIPAL -->
-    <div class="image-box">
-        <img src="/img/mbappe.png" alt="Mbappe">
+    <!-- 🔴 MBAPPE OUT -->
+    <div class="side">
+        <img src="/img/mbappe.png" class="player">
+
+        <div id="mbappeCount" class="counter">0</div>
+
+        <div class="progress">
+            <div id="mbappeBar" class="bar bar-red"></div>
+        </div>
+
+        <!-- BOTÓN OUT -->
+        <form action="/vote" method="post">
+            <button name="option" value="mbappe" class="big-btn big-btn-red">
+                SIGN THE PETITION ❌
+            </button>
+        </form>
+
+        <!-- BOTÓN STAY -->
+        <form action="/vote" method="post">
+            <button name="option" value="stay" class="big-btn big-btn-gold">
+                STAY ⭐
+            </button>
+        </form>
     </div>
 
-    <div class="counter">
-        <p>Mbappé OUT: {{ mbappe }}</p>
-        <p>Vinícius IN: {{ vinicius }}</p>
-    </div>
+    <!-- 🟢 VINICIUS -->
+    <div class="side">
+        <img src="/img/vini.png" class="player">
 
-    <form action="/vote" method="post">
-        <button name="option" value="mbappe" class="btn red">MBAPPÉ OUT</button>
-        <button name="option" value="vinicius" class="btn green">VINÍCIUS GOAT</button>
-    </form>
+        <div id="viniCount" class="counter">0</div>
+
+        <div class="progress">
+            <div id="viniBar" class="bar bar-green"></div>
+        </div>
+
+        <form action="/vote" method="post">
+            <button name="option" value="vinicius" class="big-btn big-btn-green">
+                SUPPORT VINICIUS 🐐
+            </button>
+        </form>
+    </div>
 
 </div>
+
+<!-- 🔥 SCRIPT -->
+<script>
+async function updateStats() {
+    try {
+        const res = await fetch('/stats');
+        const data = await res.json();
+
+        const mbappe = data.mbappe;
+        const vini = data.vinicius;
+        const stay = data.stay || 0;
+
+        const totalLeft = mbappe + stay || 1;
+        const totalRight = vini || 1;
+
+        animateValue("mbappeCount", mbappe);
+        animateValue("viniCount", vini);
+
+        // 🔴 barra OUT
+        document.getElementById("mbappeBar").style.width =
+            (mbappe / totalLeft * 100) + "%";
+
+        // 🟢 barra vini
+        document.getElementById("viniBar").style.width =
+            (vini / (vini + mbappe + stay) * 100) + "%";
+
+    } catch (e) {
+        console.log("error stats", e);
+    }
+}
+
+function animateValue(id, newValue) {
+    const el = document.getElementById(id);
+    const current = parseInt(el.innerText) || 0;
+
+    if (current === newValue) return;
+
+    let start = current;
+    const duration = 400;
+    const stepTime = 20;
+    const steps = duration / stepTime;
+    const increment = (newValue - start) / steps;
+
+    let count = 0;
+
+    const timer = setInterval(() => {
+        start += increment;
+        el.innerText = Math.floor(start);
+
+        count++;
+        if (count >= steps) {
+            el.innerText = newValue;
+            clearInterval(timer);
+
+            el.classList.add("flash");
+            setTimeout(() => el.classList.remove("flash"), 300);
+        }
+    }, stepTime);
+}
+
+setInterval(updateStats, 3000);
+updateStats();
+</script>
 
 </body>
 </html>
