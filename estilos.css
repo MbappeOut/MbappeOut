@@ -161,29 +161,95 @@ body {
     background: linear-gradient(90deg, #c8a94a, #6b5a1e);
 }
 
-/* 🔥 BOTONES */
+/* 🔥 BASE PARA TODOS LOS BOTONES */
+button {
+    position: relative;
+    overflow: hidden;
+    letter-spacing: 1.5px;
+    font-size: 13px;
+}
+
+/* 🔴 BOTÓN OUT (PRO) */
 .btn-red {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 16px;
+    border-radius: 12px;
     border: none;
-    font-weight: bold;
-    background: linear-gradient(180deg, #ff2a2a, #8a0d0d);
+    font-weight: 600;
+    background: linear-gradient(180deg, #ff3b3b, #a10000);
     color: white;
     cursor: pointer;
     margin-top: 12px;
+
+    box-shadow:
+        0 8px 25px rgba(255, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+
+    transition: all 0.25s ease;
 }
 
+/* 🔥 HOVER ROJO */
+.btn-red:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 12px 35px rgba(255, 0, 0, 0.5),
+        inset 0 1px 0 rgba(255,255,255,0.3);
+}
+
+/* 🟡 BOTÓN STAY (PRO NIVEL ALTO) */
 .btn-gold {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 16px;
+    border-radius: 12px;
     border: none;
-    font-weight: bold;
-    background: linear-gradient(180deg, #ffd700, #9c7b1f);
-    color: black;
+    font-weight: 700;
+    letter-spacing: 2px;
     cursor: pointer;
     margin-top: 12px;
+
+    background: linear-gradient(
+        90deg,
+        #a87c1d 0%,
+        #f5d06f 50%,
+        #a87c1d 100%
+    );
+
+    color: #000;
+
+    box-shadow:
+        0 10px 30px rgba(255, 215, 0, 0.25),
+        inset 0 1px 2px rgba(255,255,255,0.3);
+
+    transition: all 0.25s ease;
+}
+
+/* ✨ HOVER GOLD */
+.btn-gold:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 15px 40px rgba(255, 215, 0, 0.4),
+        inset 0 1px 2px rgba(255,255,255,0.4);
+}
+
+/* 🔥 EFECTO BRILLO (ESTO ES LO QUE LOS HACE PRO) */
+.btn-gold::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.5),
+        transparent
+    );
+    transition: 0.6s;
+}
+
+.btn-gold:hover::before {
+    left: 100%;
 }
 
 .btn-red:hover,
