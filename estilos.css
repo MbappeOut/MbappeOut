@@ -10,45 +10,57 @@ body {
     text-align: center;
 }
 
+/* 🔥 TITULO */
 .title {
     margin-top: 30px;
-    font-size: 28px;
-    letter-spacing: 4px;
+    font-size: 30px;
+    letter-spacing: 5px;
     color: #aaa;
 }
 
-/* 🔥 CONTENEDOR PRINCIPAL */
+/* 🔥 CONTENEDOR */
 .container {
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    gap: 30px;
-    margin-top: 40px;
+    gap: 40px;
+    margin-top: 50px;
     padding: 0 20px;
 }
 
-/* 🔥 CADA LADO = EXACTAMENTE MITAD */
+/* 🔥 CADA LADO */
 .side {
     width: 50%;
-    max-width: 500px;
+    max-width: 550px;
 }
 
-/* 🔥 HERO (IMAGEN CONTROLADA) */
+/* 🔥 TARJETA */
+.card {
+    background: linear-gradient(180deg, #0c0c0e, #050506);
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow:
+        0 30px 80px rgba(0,0,0,0.9),
+        inset 0 0 0 1px rgba(255,255,255,0.04);
+}
+
+/* 🔥 HERO GRANDE */
 .hero {
     position: relative;
     width: 100%;
-    height: 420px; /* 🔥 MISMO ALTO PARA TODOS */
-    border-radius: 16px;
+    height: 520px; /* 🔥 MÁS GRANDE */
+    border-radius: 18px;
     overflow: hidden;
     background: #000;
 }
 
-/* 🔥 IMAGEN AJUSTADA PERFECTA */
+/* 🔥 IMAGEN PRO */
 .hero-img {
     width: 100%;
     height: 100%;
-    object-fit: cover;       /* 🔥 CLAVE */
-    object-position: center; /* centra bien */
+    object-fit: cover;
+    object-position: top center;
+    transform: scale(1.12); /* 🔥 zoom elegante */
     display: block;
 }
 
@@ -57,8 +69,8 @@ body {
     position: absolute;
     bottom: 0;
     width: 100%;
-    height: 50%;
-    background: linear-gradient(to top, black, transparent);
+    height: 60%;
+    background: linear-gradient(to top, #000 10%, transparent);
 }
 
 /* 🔥 STAMP */
@@ -76,13 +88,13 @@ body {
 .stamp.red {
     color: red;
     border-color: red;
-    box-shadow: 0 0 20px red;
+    box-shadow: 0 0 25px red;
 }
 
 .stamp.gold {
     color: #d4af37;
     border-color: #d4af37;
-    box-shadow: 0 0 20px rgba(212,175,55,0.4);
+    box-shadow: 0 0 25px rgba(212,175,55,0.5);
 }
 
 /* TEXTO */
@@ -90,15 +102,17 @@ body {
     font-size: 13px;
     color: #aaa;
     text-align: left;
-    margin: 15px 0;
+    margin: 18px 0;
+    line-height: 1.5;
 }
 
-/* 🔥 COUNTER */
+/* 🔥 COUNTER CARD */
 .counter-card {
     background: linear-gradient(180deg, #111, #070707);
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 18px;
     margin-bottom: 15px;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.03);
 }
 
 .counter-top {
@@ -108,8 +122,9 @@ body {
 }
 
 .counter-number {
-    font-size: 42px;
+    font-size: 46px;
     font-weight: 900;
+    letter-spacing: 1px;
 }
 
 .goal span {
@@ -126,9 +141,10 @@ body {
 .counter-label {
     font-size: 11px;
     color: #777;
-    margin: 5px 0 10px;
+    margin: 6px 0 10px;
 }
 
+/* 🔥 PROGRESS */
 .progress {
     height: 8px;
     background: #1a1a1a;
@@ -149,39 +165,41 @@ body {
     background: linear-gradient(90deg, #c8a94a, #6b5a1e);
 }
 
-/* BOTONES */
+/* 🔥 BOTONES */
 .btn-red {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 15px;
+    border-radius: 12px;
     border: none;
     font-weight: bold;
     background: linear-gradient(180deg, #ff2a2a, #8a0d0d);
     color: white;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 12px;
+    box-shadow: 0 10px 30px rgba(255,0,0,0.3);
 }
 
 .btn-gold {
     width: 100%;
-    padding: 14px;
-    border-radius: 10px;
+    padding: 15px;
+    border-radius: 12px;
     border: none;
     font-weight: bold;
     background: linear-gradient(180deg, #ffd700, #9c7b1f);
     color: black;
     cursor: pointer;
-    margin-top: 10px;
+    margin-top: 12px;
+    box-shadow: 0 10px 30px rgba(255,215,0,0.3);
 }
 
 .btn-red:hover,
 .btn-gold:hover {
-    transform: scale(1.04);
+    transform: scale(1.05);
 }
 
 /* EFECTO CONTADOR */
 .flash {
-    color: gold;
+    color: #ffd700;
     transform: scale(1.2);
 }
 
@@ -198,6 +216,6 @@ body {
     }
 
     .hero {
-        height: 320px;
+        height: 420px;
     }
 }
