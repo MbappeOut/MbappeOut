@@ -67,19 +67,6 @@ def get_country(ip):
 # 🚀 TRACK VISITAS
 # =========================
 
-@app.get("/")
-def home(request: Request):
-
-    ip = request.client.host
-    country = get_country(ip)
-
-    try:
-        # 👇 esto escribe en Google Sheets
-        sheet.append_row([ip, country])
-    except Exception as e:
-        print("❌ Error escribiendo en Sheets:", e)
-
-    return {"ok": True, "ip": ip, "country": country}
 
 
 # =========================
@@ -265,9 +252,17 @@ def get_external_votes():
 # =========================
 import sqlite3
 
+
+# =========================
+# 🌐 ROUTES
+# =========================
+import sqlite3
+
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
+import os
+from fastapi import Query, HTTPException
 import os
 from fastapi import Query, HTTPException
 
