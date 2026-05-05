@@ -25,33 +25,35 @@ templates = Jinja2Templates(directory=".")
 
 
 
+import sqlite3
+
 DB_PATH = "/var/data/votes.db"
 
 def get_db():
     return sqlite3.connect(DB_PATH, check_same_thread=False)
-import os
 
-if not os.path.exists(DB_PATH):
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
+# 🔥 crear tablas SIEMPRE (sin if)
+conn = get_db()
+cursor = conn.cursor()
 
-    cursor.execute("""
-    CREATE TABLE votes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        option TEXT,
-        ip TEXT
-    )
-    """)
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS votes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    option TEXT,
+    ip TEXT
+)
+""")
 
-    cursor.execute("""
-    CREATE TABLE leads (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT
-    )
-    """)
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS leads (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT
+)
+""")
 
-    conn.commit()
-    conn.close()
+conn.commit()
+conn.close()
+
 # =========================
 # 🎨 CSS
 # =========================
