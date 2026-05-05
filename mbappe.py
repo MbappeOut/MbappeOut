@@ -89,25 +89,22 @@ def save_email_to_drive(email: str):
     except Exception as e:
         print("❌ Error guardando en Drive:", e)
 # =========================
-# 🖼️ IMÁGENES (DISK CACHE 🔥)
+# 🖼️ IMÁGENES AUTO DESDE CARPETA 🔥
 # =========================
 
 from fastapi.responses import FileResponse
 from googleapiclient.http import MediaIoBaseDownload
-import os
+import mimetypes
+from threading import Lock
 
-# 📁 Carpeta persistente en Render
 DATA_DIR = "/var/data/images"
 os.makedirs(DATA_DIR, exist_ok=True)
 
-# 🔑 IDs reales de Drive
-IMAGES = {
-    "mbappe.jpg": "ID_MBAPPE",
-    "vinicius.jpg": "ID_VINICIUS"
-}
+FOLDER_ID = "19Rq5-1457Y7b4TAu995pTxOvwmub7slf"
 
-# 🔒 Locks para evitar descargas duplicadas
-from threading import Lock
+# 🔥 Cache dinámico (nombre -> file_id)
+IMAGES = {}
+
 locks = {}
 
 def get_lock(name):
@@ -115,7 +112,22 @@ def get_lock(name):
         locks[name] = Lock()
     return locks[name]
 
-# ⬇️ Descargar desde Drive y guardar en disco
+# 🔎 Cargar archivos de la carpeta automáticamente
+def load_images_from_drive():
+    global IMAGES
+
+    results = drive_service.files().list(
+        q=f"'{FOLDER_ID}' in parents and trashed=false",
+        fields="files(id, name)"
+    ).execute()
+
+    files = results.get("files", [])
+
+    IMAGES = {file["name"]: file["id"] for file in files}
+
+    print("🧠 IMAGES CARGADAS:", IMAGES)
+
+# ⬇️ Descargar
 def download_from_drive(file_id, path):
     request = drive_service.files().get_media(fileId=file_id)
 
@@ -126,30 +138,33 @@ def download_from_drive(file_id, path):
         while not done:
             _, done = downloader.next_chunk()
 
-# 🚀 Endpoint de imágenes
+# 🚀 Endpoint
 @app.get("/img/{image_name}")
 def serve_image(image_name: str):
+
+    if not IMAGES:
+        load_images_from_drive()
+
+    print("🖼️ Pidiendo:", image_name)
+
     if image_name not in IMAGES:
-        return {"error": "Imagen no encontrada"}
+        return {"error": f"No existe: {image_name}"}
 
     file_path = os.path.join(DATA_DIR, image_name)
 
     lock = get_lock(image_name)
 
-    # 🔥 Evita descargas duplicadas concurrentes
     with lock:
         if not os.path.exists(file_path):
             download_from_drive(IMAGES[image_name], file_path)
 
-    # ⚡ Sirve directo desde disco (rápido)
+    media_type, _ = mimetypes.guess_type(file_path)
+
     return FileResponse(
         file_path,
-        media_type="image/jpeg",
-        headers={
-            "Cache-Control": "public, max-age=31536000"
-        }
+        media_type=media_type or "application/octet-stream",
+        headers={"Cache-Control": "public, max-age=31536000"}
     )
-
 # =========================
 # 🌐 ROUTES
 # =========================
